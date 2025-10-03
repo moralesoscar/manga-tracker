@@ -1,0 +1,34 @@
+.card {
+  background-color: #ffffff;
+  border: 1px solid #c8e6c9;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px 0;
+  box-shadow: 0 4px 8px rgba(46, 125, 50, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(46, 125, 50, 0.2);
+}
+
+.heart-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  font-size: 1.8rem;
+  color: #66bb6a; /* verde suave */
+  transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.heart-button:hover {
+  transform: scale(1.2);
+  color: #388e3c; /* verde medio */
+}
+
+.heart-button.liked {
+  color: #2e7d32; /* verde principal */
+  transform: scale(1.3);
+}

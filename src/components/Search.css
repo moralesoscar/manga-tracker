@@ -1,0 +1,30 @@
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #66bb6a; /* verde suave */
+  border-radius: 8px;
+  padding: 6px 10px;
+  max-width: 300px;
+  box-shadow: 0 2px 4px rgba(46, 125, 50, 0.1);
+}
+
+.search-bar .search-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 1rem;
+  color: #2e7d32; /* verde principal */
+  background-color: transparent;
+  width: 600px;
+}
+
+.search-bar input::placeholder {
+  color: #66bb6a; /* verde suave */
+}
