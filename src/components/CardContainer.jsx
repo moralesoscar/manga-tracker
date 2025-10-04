@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import Card from './Card.jsx'
 
-const CardContainer = ({ mangaList }) => {
+const CardContainer = ({ mangaList, preferedLanguage }) => {
     return (
         <ul>
-            {mangaList.map((manga) => (
-                <Card key={manga.id} name={manga.attributes.title.en}/>
+            {mangaList.map((m) => (
+                <Card key={m.id} manga={m} preferedLanguage={preferedLanguage}/>
             ))}
         </ul>
     )
