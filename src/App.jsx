@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import Search from './components/Search.jsx'
 import CardContainer from './components/CardContainer.jsx'
+import Spinner from './components/Spinner.jsx'
 import db from './db.json'
 
 
@@ -24,6 +25,7 @@ const App = () => {
       }
       
       setMangaResults(db.data)
+      
 
     } catch (error) {
       console.log(`Error while fetching data: ${error}`);
@@ -47,8 +49,8 @@ const App = () => {
       </header>
 
       <section>
-        { isLoading ? <p>Loading...</p> : errorMessage ? <p>{errorMessage}</p> : 
-        <CardContainer className='card-container' mangaList={mangaResults}/>
+        { isLoading ? <Spinner/> : errorMessage ? <p>{errorMessage}</p> : 
+        <CardContainer className='card-container' mangaList={mangaResults} preferedLanguage={'en'}/>
         }
       </section>
     </main>
