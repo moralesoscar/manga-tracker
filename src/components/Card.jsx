@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import heart_green from '../assets/heart_green.svg'
 import heart_red from '../assets/heart_red.svg'
+import article_green from '../assets/article_green.svg'
+import pen_green from '../assets/pen_green.svg'
 import './Card.css'
 
 const img_url = import.meta.env.VITE_BACKEND_URL;
@@ -34,6 +36,27 @@ const Card = ({ preferedLanguage,
       <h3>{title[preferedLanguage]}</h3>
       <img src={`${img_url}/Cover/${id}/${relationships.find(rel => rel.type === "cover_art").attributes.fileName}`} 
            alt={title[preferedLanguage]}/>
+      <div style={{display: 'flex',  flexDirection: 'row', alignItems: 'center'}}>
+        <p>{year}</p>
+        <span>·</span>
+        {
+          relationships.find(rel => rel.type === "author").attributes.name === 
+          relationships.find(rel => rel.type === "artist").attributes.name ? 
+          <div style={{display: 'flex',  flexDirection: 'row'}}>
+            <img src={article_green}/>
+            <img src={pen_green}/>
+            <p>{relationships.find(rel => rel.type === "author").attributes.name}</p> 
+          </div> :
+          <div>
+            <div style={{display: 'flex',  flexDirection: 'row'}}>
+              <img src={article_green}/><p>{relationships.find(rel => rel.type === "author").attributes.name}</p>
+            </div>
+            <div style={{display: 'flex',  flexDirection: 'row'}}>
+              <img src={pen_green}/><p>{relationships.find(rel => rel.type === "artist").attributes.name}</p>
+            </div>
+          </div>
+        }
+      </div>
       <button className={liked ? 'heart-button liked' : 'heart-button'} onClick={() => setLiked((prevState) => !prevState)}>
         <img src={liked ? heart_red : heart_green}/>
       </button>
