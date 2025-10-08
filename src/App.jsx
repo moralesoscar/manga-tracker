@@ -3,13 +3,13 @@ import './App.css'
 import Search from './components/Search.jsx'
 import CardContainer from './components/CardContainer.jsx'
 import Spinner from './components/Spinner.jsx'
-import db from './db.json'
 
-
+const manga_url = import.meta.env.VITE_BACKEND_URL;
 
 const App = () => {
   
   const [searchTerm, setSearchTerm] = useState('');
+  const [offset, setOffset] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
   const [mangaResults, setMangaResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,14 +18,20 @@ const App = () => {
     setIsLoading(true);
 
     try {
-      // TODO: Change to API
+      const response = await fetch(`${manga_url}/manga?offset=${offset}`)
+      if (!response.ok) {
+        console.log(response);
+          throw new Error('Error al comunicarse con manga-tracker API');
+      }
+      const data = await response.json();
       
-      if (db.result != 'ok') {
+      if (data.result != 'ok') {
         throw new Error('Result status was different to "ok"');
       }
       
-      setMangaResults(db.data)
+      setMangaResults(data.data)
       
+      setOffset(data.offset + data.limit)
 
     } catch (error) {
       console.log(`Error while fetching data: ${error}`);
