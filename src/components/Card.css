@@ -37,3 +37,26 @@
   color: #2e7d32; /* verde principal */
   transform: scale(1.3);
 }
+
+.manga-title {
+  height: 3em;
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+  color: #66bb6a; /* verde suave */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.manga-cover {
+  width: 256px;
+  height: 384px;
+}
+
+.manga-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}

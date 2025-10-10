@@ -25,17 +25,13 @@ const Card = ({ preferedLanguage,
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
   
-  useEffect(() => {
-    console.log(`${name} has been loaded!`)
-  }, []);
-
-
-
   return (
     <div className='card'>
-      <h3>{title[preferedLanguage]}</h3>
-      <img src={`${img_url}/Cover/${id}/${relationships.find(rel => rel.type === "cover_art").attributes.fileName}`} 
-           alt={title[preferedLanguage]}/>
+      <h3 className='manga-title' title={title[preferedLanguage]}>{title[preferedLanguage]}</h3>
+      <div className='manga-cover'>
+        <img alt={title[preferedLanguage]}
+          src={`${img_url}/Cover/${id}/${relationships.find(rel => rel.type === "cover_art").attributes.fileName}`} />
+      </div>
       <div style={{display: 'flex',  flexDirection: 'row', alignItems: 'center'}}>
         <p>{year}</p>
         <span>·</span>
