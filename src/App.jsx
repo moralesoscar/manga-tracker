@@ -1,24 +1,49 @@
 import { useEffect, useState } from 'react'
+import { useDebounce } from 'react-use'
+import useInfiniteScroll, { ScrollDirection } from 'react-easy-infinite-scroll-hook';
 import './App.css'
 import Search from './components/Search.jsx'
 import CardContainer from './components/CardContainer.jsx'
 import Spinner from './components/Spinner.jsx'
+
 
 const manga_url = import.meta.env.VITE_BACKEND_URL;
 
 const App = () => {
   
   const [searchTerm, setSearchTerm] = useState('');
-  const [offset, setOffset] = useState(0);
+  const [currentOffset, setCurrentOffset] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
   const [mangaResults, setMangaResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  
-  const fetchData = async () => {
-    setIsLoading(true);
+  const [debounceSearchTerm, setDebounceSearchTerm] = useState('');
+  const [hasMore, setHasMore] = useState(true);
 
+  // Effect, when searchTerm changes and wait for 1 sec
+  useDebounce(() => 
+    setDebounceSearchTerm(searchTerm), 
+    1000,
+    [searchTerm]);
+
+  // Effect, when debounceSearchTerm changes
+  useEffect(() => {
+    setCurrentOffset(0);
+    setMangaResults([]);
+    setHasMore(true);
+    //fetchData(debounceSearchTerm, 0);
+  }, [debounceSearchTerm]);
+
+  // Get data form API
+  const fetchData = async (query = '', offset = 0) => {
+    if (offset === 0) {
+      setMangaResults([]);
+    }
+
+    setIsLoading(true);
+    console.log(offset);
     try {
-      const response = await fetch(`${manga_url}/manga?offset=${offset}`)
+      const endpoint = query ? `${manga_url}/manga?title=${encodeURIComponent(query)}&offset=${offset}` : `${manga_url}/manga?offset=${offset}`;
+      const response = await fetch(endpoint)
       if (!response.ok) {
         console.log(response);
           throw new Error('Error al comunicarse con manga-tracker API');
@@ -28,10 +53,12 @@ const App = () => {
       if (data.result != 'ok') {
         throw new Error('Result status was different to "ok"');
       }
-      
-      setMangaResults(data.data)
-      
-      setOffset(data.offset + data.limit)
+
+      setCurrentOffset(data.offset + data.limit);
+      if (data.offset + data.limit >= data.total) {
+        setHasMore(false);
+      }
+      return(data.data);
 
     } catch (error) {
       console.log(`Error while fetching data: ${error}`);
@@ -41,10 +68,25 @@ const App = () => {
     }
   }
 
-  useEffect(() => {
-    console.log('APP has loaded.')
-    fetchData();
-  }, []);
+  // Get next, paginated, data from API
+  const next = async (direction) => {
+    console.log("NEXT");
+    console.log(currentOffset);
+    try {
+        setIsLoading(true);
+        const newMangas = await fetchData(debounceSearchTerm, currentOffset);
+        setMangaResults((prevMangas) => direction === 'up' ? [...newMangas, ...prevMangas] : [...prevMangas, ...newMangas]);
+        
+    } finally {
+        setIsLoading(false);
+    }
+  }
+
+  const ref = useInfiniteScroll({
+      next,
+      rowCount: mangaResults.length,
+      hasMore: { down: hasMore }
+  });
 
   return (
     <main>
@@ -55,9 +97,8 @@ const App = () => {
       </header>
 
       <section>
-        { isLoading ? <Spinner/> : errorMessage ? <p>{errorMessage}</p> : 
-        <CardContainer className='card-container' mangaList={mangaResults} preferedLanguage={'en'}/>
-        }
+        <CardContainer _ref={ref} mangaList={mangaResults} preferedLanguage={'en'}/>
+        { isLoading && <Spinner/> }
       </section>
     </main>
   )
