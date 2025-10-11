@@ -11,7 +11,8 @@ const Card = ({ preferedLanguage,
                 manga: { 
                   id,
                   attributes: {
-                    title, 
+                    title,
+                    altTitles, 
                     description, 
                     links, 
                     status, 
@@ -22,14 +23,15 @@ const Card = ({ preferedLanguage,
                   relationships
                 }}) => {
   
-  const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
   
+  const titleObj = title[preferedLanguage] || altTitles.find(alt => alt.hasOwnProperty(preferedLanguage))?.[preferedLanguage] || Object.values(title)[0];
+
   return (
     <div className='card'>
-      <h3 className='manga-title' title={title[preferedLanguage]}>{title[preferedLanguage]}</h3>
+      <h3 className='manga-title' title={titleObj}>{titleObj}</h3>
       <div className='manga-cover'>
-        <img alt={title[preferedLanguage]}
+        <img alt={titleObj}
           src={`${img_url}/Cover/${id}/${relationships.find(rel => rel.type === "cover_art").attributes.fileName}`} />
       </div>
       <p>{year}</p>

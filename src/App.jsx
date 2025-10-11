@@ -5,10 +5,11 @@ import Search from './components/Search.jsx'
 import TrendContainer from './components/TrendContainer.jsx'
 import CardContainer from './components/CardContainer.jsx'
 import Spinner from './components/Spinner.jsx'
+import LanguageSelector from './components/LanguageSelector.jsx'
 
 
 const manga_url = import.meta.env.VITE_BACKEND_URL;
-const limit_results = 10;
+const limit_results = 12;
 
 const App = () => {
   
@@ -21,6 +22,7 @@ const App = () => {
   const [debounceSearchTerm, setDebounceSearchTerm] = useState('');
   const [isLoadingMetrics, setIsLoadingMetrics] = useState(false);
   const [mangaTrends, setMangaTrends] = useState([]);
+  const [preferedLanguage, setPreferedLanguage] = useState('en');
 
   // Effect, when loading page
   useEffect(() => {
@@ -121,6 +123,7 @@ const App = () => {
   return (
     <main>
       <header>
+        <LanguageSelector preferedLanguage={preferedLanguage} setPreferedLanguage={setPreferedLanguage}/>
         <h1>Manga Buzz</h1>
         <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
       </header>
@@ -130,14 +133,14 @@ const App = () => {
       { mangaTrends.length > 0 && (
           <section>
             <h2>Trending Mangas</h2>
-            { isLoading ? <Spinner/> : <TrendContainer trendList={mangaTrends}/> }
+            { isLoadingMetrics ? <Spinner/> : <TrendContainer trendList={mangaTrends}/> }
           </section>
         )
       }
 
       <section>
         <h2>All Mangas</h2>
-        { isLoading ? <Spinner/> : <CardContainer mangaList={mangaResults} preferedLanguage={'en'}/> }
+        { isLoading ? <Spinner/> : <CardContainer mangaList={mangaResults} preferedLanguage={preferedLanguage}/> }
         <div className="pagination">
           <button onClick={handlePrev} disabled={currentPage === 0}>Prev</button>
           <h3>{ currentPage + 1 }</h3>

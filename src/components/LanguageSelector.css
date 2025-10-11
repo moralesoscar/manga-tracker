@@ -1,0 +1,35 @@
+.language-selector {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(46, 125, 50, 0.2);
+  width: fit-content;
+  margin: 10px auto;
+  transition: background-color 0.3s ease;
+}
+
+.language-selector img {
+  width: 32px;
+  height: 22px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.language-selector img:hover {
+  transform: scale(1.1);
+  border-color: #2e7d32;
+}
+
+.language-selector img.active {
+  border-color: #2e7d32;
+  box-shadow: 0 0 5px rgba(46, 125, 50, 0.5);
+}
