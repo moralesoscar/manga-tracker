@@ -1,49 +1,83 @@
 import { useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
-import useInfiniteScroll, { ScrollDirection } from 'react-easy-infinite-scroll-hook';
 import './App.css'
 import Search from './components/Search.jsx'
+import TrendContainer from './components/TrendContainer.jsx'
 import CardContainer from './components/CardContainer.jsx'
 import Spinner from './components/Spinner.jsx'
 
 
 const manga_url = import.meta.env.VITE_BACKEND_URL;
+const limit_results = 10;
 
 const App = () => {
   
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentOffset, setCurrentOffset] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [currentTotal, setCurrentTotal] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
   const [mangaResults, setMangaResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [debounceSearchTerm, setDebounceSearchTerm] = useState('');
-  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMetrics, setIsLoadingMetrics] = useState(false);
+  const [mangaTrends, setMangaTrends] = useState([]);
 
+  // Effect, when loading page
+  useEffect(() => {
+    fetchMetrics();
+  }, []);
+  
   // Effect, when searchTerm changes and wait for 1 sec
   useDebounce(() => 
-    setDebounceSearchTerm(searchTerm), 
+    setDebounceSearchTerm(searchTerm.trim()), 
     1000,
     [searchTerm]);
 
   // Effect, when debounceSearchTerm changes
   useEffect(() => {
-    setCurrentOffset(0);
-    setMangaResults([]);
-    setHasMore(true);
-    //fetchData(debounceSearchTerm, 0);
+    resetPage(0);
   }, [debounceSearchTerm]);
+
+  // Get metrics form API
+  const fetchMetrics = async () => {
+    setIsLoadingMetrics(true);
+    try {
+      const endpoint = `${manga_url}/metrics/search`;
+      const response = await fetch(endpoint);
+      
+      if (!response.ok) {
+        console.log(response);
+          throw new Error('Error al comunicarse con manga-tracker API');
+      }
+
+      const data = await response.json();
+      
+      if (data.result != 'ok') {
+        throw new Error('Result status was different to "ok"');
+      }
+
+      setMangaTrends(data.data);
+      
+    } catch (error) {
+      console.log(`Error while fetching data: ${error}`);
+      setErrorMessage('Error. Try again Later');
+    } finally {
+      setIsLoadingMetrics(false);
+    }
+  }
 
   // Get data form API
   const fetchData = async (query = '', offset = 0) => {
-    if (offset === 0) {
-      setMangaResults([]);
-    }
-
     setIsLoading(true);
-    console.log(offset);
     try {
-      const endpoint = query ? `${manga_url}/manga?title=${encodeURIComponent(query)}&offset=${offset}` : `${manga_url}/manga?offset=${offset}`;
-      const response = await fetch(endpoint)
+      const params = new URLSearchParams({
+        offset: offset * limit_results
+      });
+      if (query.trim()) {
+        params.append('title', query)
+      }
+      const endpoint = `${manga_url}/manga?${params.toString()}`;
+      const response = await fetch(endpoint);
       if (!response.ok) {
         console.log(response);
           throw new Error('Error al comunicarse con manga-tracker API');
@@ -53,12 +87,9 @@ const App = () => {
       if (data.result != 'ok') {
         throw new Error('Result status was different to "ok"');
       }
-
-      setCurrentOffset(data.offset + data.limit);
-      if (data.offset + data.limit >= data.total) {
-        setHasMore(false);
-      }
-      return(data.data);
+      
+      setCurrentTotal(data.total);
+      setMangaResults(data.data);
 
     } catch (error) {
       console.log(`Error while fetching data: ${error}`);
@@ -68,37 +99,50 @@ const App = () => {
     }
   }
 
-  // Get next, paginated, data from API
-  const next = async (direction) => {
-    console.log("NEXT");
-    console.log(currentOffset);
-    try {
-        setIsLoading(true);
-        const newMangas = await fetchData(debounceSearchTerm, currentOffset);
-        setMangaResults((prevMangas) => direction === 'up' ? [...newMangas, ...prevMangas] : [...prevMangas, ...newMangas]);
-        
-    } finally {
-        setIsLoading(false);
-    }
+  const handlePrev = () => {
+    const newPage = currentPage - 1;
+    resetPage(newPage);
   }
 
-  const ref = useInfiniteScroll({
-      next,
-      rowCount: mangaResults.length,
-      hasMore: { down: hasMore }
-  });
+  const handleNext = () => {
+    const newPage = currentPage + 1;
+    resetPage(newPage);
+  }
+
+  const resetPage = (newPage) => {
+    setCurrentPage(newPage);
+    fetchData(debounceSearchTerm, newPage);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
 
   return (
     <main>
       <header>
         <h1>Manga Buzz</h1>
         <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
-        Count: {mangaResults.length}
       </header>
 
+      { errorMessage && <h3>{errorMessage}</h3> }
+
+      { mangaTrends.length > 0 && (
+          <section>
+            <h2>Trending Mangas</h2>
+            { isLoading ? <Spinner/> : <TrendContainer trendList={mangaTrends}/> }
+          </section>
+        )
+      }
+
       <section>
-        <CardContainer _ref={ref} mangaList={mangaResults} preferedLanguage={'en'}/>
-        { isLoading && <Spinner/> }
+        <h2>All Mangas</h2>
+        { isLoading ? <Spinner/> : <CardContainer mangaList={mangaResults} preferedLanguage={'en'}/> }
+        <div className="pagination">
+          <button onClick={handlePrev} disabled={currentPage === 0}>Prev</button>
+          <h3>{ currentPage + 1 }</h3>
+          <button onClick={handleNext} disabled={(currentPage + 1) * limit_results >= currentTotal}>Next</button>
+        </div>
       </section>
     </main>
   )

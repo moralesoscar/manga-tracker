@@ -5,6 +5,4 @@
   justify-content: space-evenly; 
   align-items: flex-start;
   align-content: flex-start;
-  max-height: 70vh;
-  overflow-y: auto;
 }

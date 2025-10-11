@@ -32,9 +32,8 @@ const Card = ({ preferedLanguage,
         <img alt={title[preferedLanguage]}
           src={`${img_url}/Cover/${id}/${relationships.find(rel => rel.type === "cover_art").attributes.fileName}`} />
       </div>
+      <p>{year}</p>
       <div style={{display: 'flex',  flexDirection: 'row', alignItems: 'center'}}>
-        <p>{year}</p>
-        <span>·</span>
         {
           relationships.find(rel => rel.type === "author").attributes.name === 
           relationships.find(rel => rel.type === "artist").attributes.name ? 
