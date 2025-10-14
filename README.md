@@ -1,16 +1,58 @@
-# React + Vite
+# Manga-Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Manga-Tracker is a simple and elegant client for the Mangadex API.
 
-Currently, two official plugins are available:
+It displays manga data in a cleaner and more visually appealing way, and connects to the companion backend Manga-Tracker-API for extended functionality such as search metrics and top rankings.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- View a list of Mangadex entries with the highest ratings and most followers.
 
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Search for manga by title.
 
-## Expanding the ESLint configuration
+- Display a Top 5 list of the most searched manga within this app.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- (Coming soon) Advanced filters, tag-based searches.
+
+## Built With
+
+- React
+
+- Vite
+
+- JavaScript
+
+## Environment Variables
+
+- VITE_BACKEND_URL = url for manga-tracker-api
+
+## Running Locally
+
+1. Clone this repository
+
+```
+git clone https://github.com/moralesoscar/manga-tracker-api
+cd Manga-Tracker
+```
+
+2. Install dependencies
+
+```
+npm install
+```
+
+3. Start the development server
+
+```
+npm run dev
+```
+
+4. The app will be available at http://localhost:5173/.
+
+### Live Demo
+
+Manga-Tracker on Render [here](https://manga-tracker-iu08.onrender.com/).
+
+## License
+
+This project is licensed under the MIT License — see the LICENSE file for details.

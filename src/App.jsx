@@ -147,6 +147,11 @@ const App = () => {
           <button onClick={handleNext} disabled={(currentPage + 1) * limit_results >= currentTotal}>Next</button>
         </div>
       </section>
+
+      <footer className="text-center text-sm text-gray-500 mt-10">
+        Data provided by <a href="https://mangadex.org" target="_blank" rel="noopener noreferrer" className="underline">Mangadex API</a>.  
+        Thanks to Mangadex team for their awesome work ❤️
+      </footer>
     </main>
   )
 }
